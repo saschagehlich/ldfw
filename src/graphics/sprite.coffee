@@ -1,6 +1,6 @@
 define (require, exports, module) ->
-  Vector2 = require "../math/vector2.coffee"
-  Node    = require "../node.coffee"
+  Vector2 = require "../math/vector2"
+  Node    = require "../node"
 
   class Sprite extends Node
     ###

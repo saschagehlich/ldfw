@@ -1,52 +1,8 @@
-(function() {
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  define(function(require, exports, module) {
-    var Actor, Node;
-    Node = require("./node.coffee");
-    Actor = (function(_super) {
-      __extends(Actor, _super);
-
-      /*
-       * @param  [Game] game
-      */
-
-
-      function Actor(game) {
-        this.game = game;
-        Actor.__super__.constructor.apply(this, arguments);
-      }
-
-      /*
-       * Called at the beginning of every tick, update properties and do
-       * calculations in here
-       * @param  [Number] delta
-      */
-
-
-      Actor.prototype.update = function(delta) {};
-
-      /*
-       * Called after update, draw stuff here
-       * @param  [CanvasRenderingContext2D] context
-      */
-
-
-      Actor.prototype.draw = function(context) {};
-
-      return Actor;
-
-    })(Node);
-    return module.exports = Actor;
-  });
-
-}).call(this);
 
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  define(function(require, exports, module) {
+  define('game',['require','exports','module'],function(require, exports, module) {
     var Game;
     Game = (function() {
       function Game(wrapper, debug) {
@@ -192,464 +148,45 @@
 }).call(this);
 
 (function() {
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  define(function(require, exports, module) {
-    var AnimSprite, Sprite, Vector2;
-    Vector2 = require("../math/vector2.coffee");
-    Sprite = require("./sprite.coffee");
-    AnimSprite = (function(_super) {
-      __extends(AnimSprite, _super);
-
-      function AnimSprite(textureAtlas, frame, spriteCount, animationInterval) {
-        this.textureAtlas = textureAtlas;
-        this.frame = frame;
-        this.spriteCount = spriteCount;
-        this.animationInterval = animationInterval;
-        AnimSprite.__super__.constructor.apply(this, arguments);
-        this.rotation = 0;
-        this.sumDelta = 0;
-        this.spriteIndex = 0;
-      }
-
-      AnimSprite.prototype.getWidth = function() {
-        return this.frame.frame.w * this.scale.x;
-      };
-
-      AnimSprite.prototype.getHeight = function() {
-        return this.frame.frame.h * this.scale.y;
-      };
-
-      AnimSprite.prototype.getRotation = function() {
-        return this.rotation;
-      };
-
-      AnimSprite.prototype.setRotation = function(rotation) {
-        return this.rotation = rotation;
-      };
-
-      AnimSprite.prototype.update = function(delta) {
-        if (this.sumDelta >= this.animationInterval) {
-          this.spriteIndex++;
-          if (this.spriteIndex > this.spriteCount - 1) {
-            this.spriteIndex = 0;
-          }
-          this.sumDelta -= this.animationInterval;
-        }
-        return this.sumDelta += delta;
-      };
-
+  define('screen',['require','exports','module'],function(require, exports, module) {
+    var Screen;
+    Screen = (function() {
       /*
-       * Draws the sprite on the given context
-       * @param  [CanvasRenderingContext2D] context
+       * @param  [Game] game
       */
 
-
-      AnimSprite.prototype.draw = function(context, drawX, drawY, mirrored) {
-        var dh, dw, image, sh, sw, sx, sy, tx, ty, widthPerSprite;
-        if (mirrored == null) {
-          mirrored = false;
-        }
-        image = this.textureAtlas.getAtlasImage();
-        widthPerSprite = Math.floor(this.frame.frame.w / this.spriteCount);
-        sx = this.frame.frame.x;
-        sy = this.frame.frame.y;
-        sw = widthPerSprite;
-        sh = this.frame.frame.h;
-        sx += widthPerSprite * this.spriteIndex;
-        dw = widthPerSprite * this.scale.x;
-        dh = this.frame.frame.h * this.scale.y;
-        context.save();
-        tx = (drawX | this.position.x) + this.origin.x + Sprite.renderOffset.x;
-        ty = (drawY | this.position.y) + this.origin.y + Sprite.renderOffset.y;
-        if (mirrored) {
-          context.translate(tx + dw, ty);
-          context.scale(-1, 1);
-        } else {
-          context.translate(tx, ty);
-        }
-        context.rotate(Math.PI / 180 * this.rotation);
-        context.drawImage(image, sx, sy, sw, sh, -this.origin.x, -this.origin.y, dw, dh);
-        return context.restore();
-      };
-
-      return AnimSprite;
-
-    })(Sprite);
-    return module.exports = AnimSprite;
-  });
-
-}).call(this);
-
-(function() {
-  define(function(require, exports, module) {
-    var BitmapFont, Rectangle;
-    Rectangle = require("../math/rectangle.coffee");
-    BitmapFont = (function() {
-      function BitmapFont(fontFile, textureRegion) {
-        this.fontFile = fontFile;
-        this.textureRegion = textureRegion;
-        this.chars = {};
-        this.parseFontFile();
-      }
-
-      /*
-       * Parses the font file and stores the character information
-       * in the chars instance variable
-      */
-
-
-      BitmapFont.prototype.parseFontFile = function() {
-        var char, key, line, parameter, split, val, _i, _j, _len, _len1, _ref, _ref1, _ref2, _results;
-        _ref = this.fontFile.split("\n");
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          line = _ref[_i];
-          split = line.split(" ");
-          if (split[0] === "char") {
-            char = {};
-            _ref1 = split.slice(1, -1);
-            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-              parameter = _ref1[_j];
-              _ref2 = parameter.split("="), key = _ref2[0], val = _ref2[1];
-              char[key] = parseInt(val);
-            }
-            _results.push(this.chars[char.id] = char);
-          } else {
-            _results.push(void 0);
-          }
-        }
-        return _results;
-      };
-
-      BitmapFont.prototype.getBounds = function(text) {
-        var char, charCode, character, height, i, width, _i, _ref;
-        width = 0;
-        height = 0;
-        for (i = _i = 0, _ref = text.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-          character = text.substr(i, 1);
-          charCode = character.charCodeAt(0);
-          if (this.chars[charCode] == null) {
-            continue;
-          }
-          char = this.chars[charCode];
-          width += char.xadvance;
-          height = char.height;
-        }
-        return new Rectangle(0, 0, width, height);
-      };
-
-      /*
-       * Draws the text on the given canvas
-       * @param  {CanvasRenderingContext2D} context
-       * @param  {String} text
-       * @param  {Number} x
-       * @param  {Number} y
-      */
-
-
-      BitmapFont.prototype.drawText = function(context, text, x, y) {
-        var char, charCode, character, i, xOffset, _i, _ref, _results;
-        xOffset = 0;
-        _results = [];
-        for (i = _i = 0, _ref = text.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-          character = text.substr(i, 1);
-          charCode = character.charCodeAt(0);
-          if (this.chars[charCode] == null) {
-            continue;
-          }
-          char = this.chars[charCode];
-          this.textureRegion.draw(context, char.x, char.y, char.width, char.height, x + xOffset + char.xoffset || 0, y + char.yoffset || 0);
-          _results.push(xOffset += char.xadvance);
-        }
-        return _results;
-      };
-
-      return BitmapFont;
-
-    })();
-    return module.exports = BitmapFont;
-  });
-
-}).call(this);
-
-(function() {
-  var __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  define(function(require, exports, module) {
-    var Node, Sprite, Vector2;
-    Vector2 = require("../math/vector2.coffee");
-    Node = require("../node.coffee");
-    Sprite = (function(_super) {
-      __extends(Sprite, _super);
-
-      /*
-       * A Sprite represents a drawable image
-       * @param  [TextureAtlas] @TextureAtlas
-      */
-
-
-      Sprite.renderOffset = new Vector2(0, 0);
-
-      function Sprite(textureAtlas, frame) {
-        this.textureAtlas = textureAtlas;
-        this.frame = frame;
-        Sprite.__super__.constructor.apply(this, arguments);
-        this.rotation = 0;
-      }
-
-      Sprite.prototype.getWidth = function() {
-        return this.frame.frame.w * this.scale.x;
-      };
-
-      Sprite.prototype.getHeight = function() {
-        return this.frame.frame.h * this.scale.y;
-      };
-
-      Sprite.prototype.getRotation = function() {
-        return this.rotation;
-      };
-
-      Sprite.prototype.setRotation = function(rotation) {
-        return this.rotation = rotation;
-      };
-
-      /*
-       * Draws the sprite on the given context
-       * @param  [CanvasRenderingContext2D] context
-      */
-
-
-      Sprite.prototype.draw = function(context, drawX, drawY, mirrored) {
-        var dh, dw, image, sh, sw, sx, sy, tx, ty;
-        if (mirrored == null) {
-          mirrored = false;
-        }
-        image = this.textureAtlas.getAtlasImage();
-        sx = this.frame.frame.x;
-        sy = this.frame.frame.y;
-        sw = this.frame.frame.w;
-        sh = this.frame.frame.h;
-        dw = this.frame.frame.w * this.scale.x;
-        dh = this.frame.frame.h * this.scale.y;
-        context.save();
-        tx = Math.round((drawX || this.position.x) + this.origin.x + Sprite.renderOffset.x);
-        ty = Math.round((drawY || this.position.y) + this.origin.y + Sprite.renderOffset.y);
-        if (mirrored) {
-          context.translate(tx + dw, ty);
-          context.scale(-1, 1);
-        } else {
-          context.translate(tx, ty);
-        }
-        context.rotate(Math.PI / 180 * this.rotation);
-        context.drawImage(image, sx, sy, sw, sh, -this.origin.x, -this.origin.y, dw, dh);
-        return context.restore();
-      };
-
-      return Sprite;
-
-    })(Node);
-    return module.exports = Sprite;
-  });
-
-}).call(this);
-
-(function() {
-  define(function(require, exports, module) {
-    var AnimSprite, Sprite, TextureAtlas, TextureRegion;
-    Sprite = require("./sprite.coffee");
-    AnimSprite = require("./animsprite.coffee");
-    TextureRegion = require("./textureregion.coffee");
-    TextureAtlas = (function() {
-      function TextureAtlas(frames, image) {
-        this.frames = frames;
-        this.image = image;
+      function Screen(game) {
+        this.game = game;
         return;
       }
 
       /*
-       * Creates a new Sprite object from the given filename
-       * @param  [String] filename
-       * @return [Sprite]
+       * Called at the beginning of every tick, update properties and do
+       * calculations in here
+       * @param  [Number] delta
       */
 
 
-      TextureAtlas.prototype.createSprite = function(filename) {
-        var sprite;
-        if (this.frames[filename] == null) {
-          throw new Error("The sprite " + filename + " could not be found.");
-        }
-        sprite = new Sprite(this, this.frames[filename]);
-        return sprite;
-      };
+      Screen.prototype.update = function(delta) {};
 
       /*
-       * Creates a new AnimSprite object from the given filename
-       * @param  [String] filename
-       * @param  [Number] spriteCount
-       * @return [AnimSprite]
+       * Called after update, draw stuff here
+       * @param  [CanvasRenderingContext2D] context
       */
 
 
-      TextureAtlas.prototype.createAnimSprite = function(filename, spriteCount, animationInterval) {
-        var sprite;
-        if (this.frames[filename] == null) {
-          throw new Error("The sprite " + filename + " could not be found.");
-        }
-        sprite = new AnimSprite(this, this.frames[filename], spriteCount, animationInterval);
-        return sprite;
-      };
+      Screen.prototype.draw = function(context) {};
 
-      /*
-       * Creates a new TextureRegion object from the given filename
-       * @param  [String] filename
-       * @return [TextureRegion]
-      */
-
-
-      TextureAtlas.prototype.findRegion = function(filename) {
-        var region;
-        if (this.frames[filename] == null) {
-          throw new Error("The region " + filename + " could not be found.");
-        }
-        region = new TextureRegion(this, this.frames[filename]);
-        return region;
-      };
-
-      TextureAtlas.prototype.getAtlasImage = function() {
-        return this.image;
-      };
-
-      return TextureAtlas;
+      return Screen;
 
     })();
-    return module.exports = TextureAtlas;
+    return module.exports = Screen;
   });
 
 }).call(this);
 
 (function() {
-  define(function(require, exports, module) {
-    var TextureRegion, Vector2;
-    Vector2 = require("../math/vector2.coffee");
-    TextureRegion = (function() {
-      function TextureRegion(atlas, frame) {
-        this.atlas = atlas;
-        this.frame = frame;
-        this.image = this.atlas.getAtlasImage();
-      }
-
-      /*
-       * Draws the given rectangle of the region to the given location
-       * @param  {CanvasRenderingContext2d} context
-       * @param  {Number} sx
-       * @param  {Number} sy
-       * @param  {Number} sw
-       * @param  {Number} sh
-       * @param  {Number} dx
-       * @param  {Number} dy
-      */
-
-
-      TextureRegion.prototype.draw = function(context, sx, sy, sw, sh, dx, dy) {
-        var dh, dw, finalsx, finalsy;
-        finalsx = this.frame.frame.x + sx;
-        finalsy = this.frame.frame.y + sy;
-        sw = Math.min(sw, (this.frame.spriteSourceSize.w + this.frame.frame.x) - (this.frame.frame.x + sx));
-        sh = Math.min(sh, (this.frame.spriteSourceSize.h + this.frame.frame.y) - (this.frame.frame.y + sy));
-        dw = sw;
-        dh = sh;
-        if (sw === 0 || sh === 0) {
-          return;
-        }
-        return context.drawImage(this.image, finalsx, finalsy, sw, sh, dx, dy, dw, dh);
-      };
-
-      return TextureRegion;
-
-    })();
-    return module.exports = TextureRegion;
-  });
-
-}).call(this);
-
-(function() {
-  define(function(require, exports, module) {
-    return module.exports = {
-      Game: require("./game.coffee"),
-      Screen: require("./screen.coffee"),
-      Actor: require("./actor.coffee"),
-      Stage: require("./stage.coffee"),
-      Node: require("./node.coffee"),
-      TextureAtlas: require("./graphics/textureatlas.coffee"),
-      TextureRegion: require("./graphics/textureregion.coffee"),
-      Sprite: require("./graphics/sprite.coffee"),
-      BitmapFont: require("./graphics/bitmapfont.coffee"),
-      Vector2: require("./math/vector2.coffee"),
-      Preloader: require("./utilities/preloader.coffee")
-    };
-  });
-
-}).call(this);
-
-(function() {
-  define(function(require, exports, module) {
-    var Rectangle, Vector2;
-    Vector2 = require("./vector2.coffee");
-    Rectangle = (function() {
-      function Rectangle(x, y, width, height) {
-        if (x == null) {
-          x = 0;
-        }
-        if (y == null) {
-          y = 0;
-        }
-        this.width = width != null ? width : 0;
-        this.height = height != null ? height : 0;
-        this.position = new Vector2(x, y);
-      }
-
-      /*
-       * Sets the position
-      */
-
-
-      Rectangle.prototype.setPosition = function() {
-        return this.position.set.call(this, arguments);
-      };
-
-      /*
-       * Sets the size values
-       * @param [Number] width
-       * @param [Number] height
-      */
-
-
-      Rectangle.prototype.setSize = function(width, height) {
-        this.width = width;
-        return this.height = height;
-      };
-
-      Rectangle.prototype.getWidth = function() {
-        return this.width;
-      };
-
-      Rectangle.prototype.getHeight = function() {
-        return this.height;
-      };
-
-      return Rectangle;
-
-    })();
-    return module.exports = Rectangle;
-  });
-
-}).call(this);
-
-(function() {
-  define(function(require, exports, module) {
+  define('math/vector2',['require','exports','module'],function(require, exports, module) {
     var Vector2;
     Vector2 = (function() {
       function Vector2(x, y) {
@@ -843,10 +380,64 @@
 }).call(this);
 
 (function() {
-  define(function(require, exports, module) {
+  define('math/rectangle',['require','exports','module','./vector2'],function(require, exports, module) {
+    var Rectangle, Vector2;
+    Vector2 = require("./vector2");
+    Rectangle = (function() {
+      function Rectangle(x, y, width, height) {
+        if (x == null) {
+          x = 0;
+        }
+        if (y == null) {
+          y = 0;
+        }
+        this.width = width != null ? width : 0;
+        this.height = height != null ? height : 0;
+        this.position = new Vector2(x, y);
+      }
+
+      /*
+       * Sets the position
+      */
+
+
+      Rectangle.prototype.setPosition = function() {
+        return this.position.set.call(this, arguments);
+      };
+
+      /*
+       * Sets the size values
+       * @param [Number] width
+       * @param [Number] height
+      */
+
+
+      Rectangle.prototype.setSize = function(width, height) {
+        this.width = width;
+        return this.height = height;
+      };
+
+      Rectangle.prototype.getWidth = function() {
+        return this.width;
+      };
+
+      Rectangle.prototype.getHeight = function() {
+        return this.height;
+      };
+
+      return Rectangle;
+
+    })();
+    return module.exports = Rectangle;
+  });
+
+}).call(this);
+
+(function() {
+  define('node',['require','exports','module','./math/vector2','./math/rectangle'],function(require, exports, module) {
     var Node, Rectangle, Vector2;
-    Vector2 = require("./math/vector2.coffee");
-    Rectangle = require("./math/rectangle.coffee");
+    Vector2 = require("./math/vector2");
+    Rectangle = require("./math/rectangle");
     Node = (function() {
       function Node(game) {
         this.game = game;
@@ -973,16 +564,23 @@
 }).call(this);
 
 (function() {
-  define(function(require, exports, module) {
-    var Screen;
-    Screen = (function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  define('actor',['require','exports','module','./node'],function(require, exports, module) {
+    var Actor, Node;
+    Node = require("./node");
+    Actor = (function(_super) {
+      __extends(Actor, _super);
+
       /*
        * @param  [Game] game
       */
 
-      function Screen(game) {
+
+      function Actor(game) {
         this.game = game;
-        return;
+        Actor.__super__.constructor.apply(this, arguments);
       }
 
       /*
@@ -992,7 +590,7 @@
       */
 
 
-      Screen.prototype.update = function(delta) {};
+      Actor.prototype.update = function(delta) {};
 
       /*
        * Called after update, draw stuff here
@@ -1000,18 +598,18 @@
       */
 
 
-      Screen.prototype.draw = function(context) {};
+      Actor.prototype.draw = function(context) {};
 
-      return Screen;
+      return Actor;
 
-    })();
-    return module.exports = Screen;
+    })(Node);
+    return module.exports = Actor;
   });
 
 }).call(this);
 
 (function() {
-  define(function(require, exports, module) {
+  define('stage',['require','exports','module'],function(require, exports, module) {
     var Stage;
     Stage = (function() {
       /*
@@ -1091,14 +689,398 @@
 }).call(this);
 
 (function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  define('graphics/sprite',['require','exports','module','../math/vector2','../node'],function(require, exports, module) {
+    var Node, Sprite, Vector2;
+    Vector2 = require("../math/vector2");
+    Node = require("../node");
+    Sprite = (function(_super) {
+      __extends(Sprite, _super);
+
+      /*
+       * A Sprite represents a drawable image
+       * @param  [TextureAtlas] @TextureAtlas
+      */
+
+
+      Sprite.renderOffset = new Vector2(0, 0);
+
+      function Sprite(textureAtlas, frame) {
+        this.textureAtlas = textureAtlas;
+        this.frame = frame;
+        Sprite.__super__.constructor.apply(this, arguments);
+        this.rotation = 0;
+      }
+
+      Sprite.prototype.getWidth = function() {
+        return this.frame.frame.w * this.scale.x;
+      };
+
+      Sprite.prototype.getHeight = function() {
+        return this.frame.frame.h * this.scale.y;
+      };
+
+      Sprite.prototype.getRotation = function() {
+        return this.rotation;
+      };
+
+      Sprite.prototype.setRotation = function(rotation) {
+        return this.rotation = rotation;
+      };
+
+      /*
+       * Draws the sprite on the given context
+       * @param  [CanvasRenderingContext2D] context
+      */
+
+
+      Sprite.prototype.draw = function(context, drawX, drawY, mirrored) {
+        var dh, dw, image, sh, sw, sx, sy, tx, ty;
+        if (mirrored == null) {
+          mirrored = false;
+        }
+        image = this.textureAtlas.getAtlasImage();
+        sx = this.frame.frame.x;
+        sy = this.frame.frame.y;
+        sw = this.frame.frame.w;
+        sh = this.frame.frame.h;
+        dw = this.frame.frame.w * this.scale.x;
+        dh = this.frame.frame.h * this.scale.y;
+        context.save();
+        tx = Math.round((drawX || this.position.x) + this.origin.x + Sprite.renderOffset.x);
+        ty = Math.round((drawY || this.position.y) + this.origin.y + Sprite.renderOffset.y);
+        if (mirrored) {
+          context.translate(tx + dw, ty);
+          context.scale(-1, 1);
+        } else {
+          context.translate(tx, ty);
+        }
+        context.rotate(Math.PI / 180 * this.rotation);
+        context.drawImage(image, sx, sy, sw, sh, -this.origin.x, -this.origin.y, dw, dh);
+        return context.restore();
+      };
+
+      return Sprite;
+
+    })(Node);
+    return module.exports = Sprite;
+  });
+
+}).call(this);
+
+(function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  define('graphics/animsprite',['require','exports','module','../math/vector2','./sprite'],function(require, exports, module) {
+    var AnimSprite, Sprite, Vector2;
+    Vector2 = require("../math/vector2");
+    Sprite = require("./sprite");
+    AnimSprite = (function(_super) {
+      __extends(AnimSprite, _super);
+
+      function AnimSprite(textureAtlas, frame, spriteCount, animationInterval) {
+        this.textureAtlas = textureAtlas;
+        this.frame = frame;
+        this.spriteCount = spriteCount;
+        this.animationInterval = animationInterval;
+        AnimSprite.__super__.constructor.apply(this, arguments);
+        this.rotation = 0;
+        this.sumDelta = 0;
+        this.spriteIndex = 0;
+      }
+
+      AnimSprite.prototype.getWidth = function() {
+        return this.frame.frame.w * this.scale.x;
+      };
+
+      AnimSprite.prototype.getHeight = function() {
+        return this.frame.frame.h * this.scale.y;
+      };
+
+      AnimSprite.prototype.getRotation = function() {
+        return this.rotation;
+      };
+
+      AnimSprite.prototype.setRotation = function(rotation) {
+        return this.rotation = rotation;
+      };
+
+      AnimSprite.prototype.update = function(delta) {
+        if (this.sumDelta >= this.animationInterval) {
+          this.spriteIndex++;
+          if (this.spriteIndex > this.spriteCount - 1) {
+            this.spriteIndex = 0;
+          }
+          this.sumDelta -= this.animationInterval;
+        }
+        return this.sumDelta += delta;
+      };
+
+      /*
+       * Draws the sprite on the given context
+       * @param  [CanvasRenderingContext2D] context
+      */
+
+
+      AnimSprite.prototype.draw = function(context, drawX, drawY, mirrored) {
+        var dh, dw, image, sh, sw, sx, sy, tx, ty, widthPerSprite;
+        if (mirrored == null) {
+          mirrored = false;
+        }
+        image = this.textureAtlas.getAtlasImage();
+        widthPerSprite = Math.floor(this.frame.frame.w / this.spriteCount);
+        sx = this.frame.frame.x;
+        sy = this.frame.frame.y;
+        sw = widthPerSprite;
+        sh = this.frame.frame.h;
+        sx += widthPerSprite * this.spriteIndex;
+        dw = widthPerSprite * this.scale.x;
+        dh = this.frame.frame.h * this.scale.y;
+        context.save();
+        tx = (drawX | this.position.x) + this.origin.x + Sprite.renderOffset.x;
+        ty = (drawY | this.position.y) + this.origin.y + Sprite.renderOffset.y;
+        if (mirrored) {
+          context.translate(tx + dw, ty);
+          context.scale(-1, 1);
+        } else {
+          context.translate(tx, ty);
+        }
+        context.rotate(Math.PI / 180 * this.rotation);
+        context.drawImage(image, sx, sy, sw, sh, -this.origin.x, -this.origin.y, dw, dh);
+        return context.restore();
+      };
+
+      return AnimSprite;
+
+    })(Sprite);
+    return module.exports = AnimSprite;
+  });
+
+}).call(this);
+
+(function() {
+  define('graphics/textureregion',['require','exports','module','../math/vector2'],function(require, exports, module) {
+    var TextureRegion, Vector2;
+    Vector2 = require("../math/vector2");
+    TextureRegion = (function() {
+      function TextureRegion(atlas, frame) {
+        this.atlas = atlas;
+        this.frame = frame;
+        this.image = this.atlas.getAtlasImage();
+      }
+
+      /*
+       * Draws the given rectangle of the region to the given location
+       * @param  {CanvasRenderingContext2d} context
+       * @param  {Number} sx
+       * @param  {Number} sy
+       * @param  {Number} sw
+       * @param  {Number} sh
+       * @param  {Number} dx
+       * @param  {Number} dy
+      */
+
+
+      TextureRegion.prototype.draw = function(context, sx, sy, sw, sh, dx, dy) {
+        var dh, dw, finalsx, finalsy;
+        finalsx = this.frame.frame.x + sx;
+        finalsy = this.frame.frame.y + sy;
+        sw = Math.min(sw, (this.frame.spriteSourceSize.w + this.frame.frame.x) - (this.frame.frame.x + sx));
+        sh = Math.min(sh, (this.frame.spriteSourceSize.h + this.frame.frame.y) - (this.frame.frame.y + sy));
+        dw = sw;
+        dh = sh;
+        if (sw === 0 || sh === 0) {
+          return;
+        }
+        return context.drawImage(this.image, finalsx, finalsy, sw, sh, dx, dy, dw, dh);
+      };
+
+      return TextureRegion;
+
+    })();
+    return module.exports = TextureRegion;
+  });
+
+}).call(this);
+
+(function() {
+  define('graphics/textureatlas',['require','exports','module','./sprite','./animsprite','./textureregion'],function(require, exports, module) {
+    var AnimSprite, Sprite, TextureAtlas, TextureRegion;
+    Sprite = require("./sprite");
+    AnimSprite = require("./animsprite");
+    TextureRegion = require("./textureregion");
+    TextureAtlas = (function() {
+      function TextureAtlas(frames, image) {
+        this.frames = frames;
+        this.image = image;
+        return;
+      }
+
+      /*
+       * Creates a new Sprite object from the given filename
+       * @param  [String] filename
+       * @return [Sprite]
+      */
+
+
+      TextureAtlas.prototype.createSprite = function(filename) {
+        var sprite;
+        if (this.frames[filename] == null) {
+          throw new Error("The sprite " + filename + " could not be found.");
+        }
+        sprite = new Sprite(this, this.frames[filename]);
+        return sprite;
+      };
+
+      /*
+       * Creates a new AnimSprite object from the given filename
+       * @param  [String] filename
+       * @param  [Number] spriteCount
+       * @return [AnimSprite]
+      */
+
+
+      TextureAtlas.prototype.createAnimSprite = function(filename, spriteCount, animationInterval) {
+        var sprite;
+        if (this.frames[filename] == null) {
+          throw new Error("The sprite " + filename + " could not be found.");
+        }
+        sprite = new AnimSprite(this, this.frames[filename], spriteCount, animationInterval);
+        return sprite;
+      };
+
+      /*
+       * Creates a new TextureRegion object from the given filename
+       * @param  [String] filename
+       * @return [TextureRegion]
+      */
+
+
+      TextureAtlas.prototype.findRegion = function(filename) {
+        var region;
+        if (this.frames[filename] == null) {
+          throw new Error("The region " + filename + " could not be found.");
+        }
+        region = new TextureRegion(this, this.frames[filename]);
+        return region;
+      };
+
+      TextureAtlas.prototype.getAtlasImage = function() {
+        return this.image;
+      };
+
+      return TextureAtlas;
+
+    })();
+    return module.exports = TextureAtlas;
+  });
+
+}).call(this);
+
+(function() {
+  define('graphics/bitmapfont',['require','exports','module','../math/rectangle'],function(require, exports, module) {
+    var BitmapFont, Rectangle;
+    Rectangle = require("../math/rectangle");
+    BitmapFont = (function() {
+      function BitmapFont(fontFile, textureRegion) {
+        this.fontFile = fontFile;
+        this.textureRegion = textureRegion;
+        this.chars = {};
+        this.parseFontFile();
+      }
+
+      /*
+       * Parses the font file and stores the character information
+       * in the chars instance variable
+      */
+
+
+      BitmapFont.prototype.parseFontFile = function() {
+        var char, key, line, parameter, split, val, _i, _j, _len, _len1, _ref, _ref1, _ref2, _results;
+        _ref = this.fontFile.split("\n");
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          line = _ref[_i];
+          split = line.split(" ");
+          if (split[0] === "char") {
+            char = {};
+            _ref1 = split.slice(1, -1);
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              parameter = _ref1[_j];
+              _ref2 = parameter.split("="), key = _ref2[0], val = _ref2[1];
+              char[key] = parseInt(val);
+            }
+            _results.push(this.chars[char.id] = char);
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      };
+
+      BitmapFont.prototype.getBounds = function(text) {
+        var char, charCode, character, height, i, width, _i, _ref;
+        width = 0;
+        height = 0;
+        for (i = _i = 0, _ref = text.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          character = text.substr(i, 1);
+          charCode = character.charCodeAt(0);
+          if (this.chars[charCode] == null) {
+            continue;
+          }
+          char = this.chars[charCode];
+          width += char.xadvance;
+          height = char.height;
+        }
+        return new Rectangle(0, 0, width, height);
+      };
+
+      /*
+       * Draws the text on the given canvas
+       * @param  {CanvasRenderingContext2D} context
+       * @param  {String} text
+       * @param  {Number} x
+       * @param  {Number} y
+      */
+
+
+      BitmapFont.prototype.drawText = function(context, text, x, y) {
+        var char, charCode, character, i, xOffset, _i, _ref, _results;
+        xOffset = 0;
+        _results = [];
+        for (i = _i = 0, _ref = text.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          character = text.substr(i, 1);
+          charCode = character.charCodeAt(0);
+          if (this.chars[charCode] == null) {
+            continue;
+          }
+          char = this.chars[charCode];
+          this.textureRegion.draw(context, char.x, char.y, char.width, char.height, x + xOffset + char.xoffset || 0, y + char.yoffset || 0);
+          _results.push(xOffset += char.xadvance);
+        }
+        return _results;
+      };
+
+      return BitmapFont;
+
+    })();
+    return module.exports = BitmapFont;
+  });
+
+}).call(this);
+
+(function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(function(require, exports, module) {
+  define('utilities/preloader',['require','exports','module','eventemitter','async'],function(require, exports, module) {
     var EventEmitter, Preloader, async;
-    EventEmitter = require("events").EventEmitter;
-    async = require("../vendor/async.js");
+    EventEmitter = require("eventemitter");
+    async = require("async");
     Preloader = (function(_super) {
       __extends(Preloader, _super);
 
@@ -1228,6 +1210,25 @@
 
     })(EventEmitter);
     return module.exports = Preloader;
+  });
+
+}).call(this);
+
+(function() {
+  define('ldfw',['require','exports','module','./game','./screen','./actor','./stage','./node','./graphics/textureatlas','./graphics/textureregion','./graphics/sprite','./graphics/bitmapfont','./math/vector2','./utilities/preloader'],function(require, exports, module) {
+    return module.exports = {
+      Game: require("./game"),
+      Screen: require("./screen"),
+      Actor: require("./actor"),
+      Stage: require("./stage"),
+      Node: require("./node"),
+      TextureAtlas: require("./graphics/textureatlas"),
+      TextureRegion: require("./graphics/textureregion"),
+      Sprite: require("./graphics/sprite"),
+      BitmapFont: require("./graphics/bitmapfont"),
+      Vector2: require("./math/vector2"),
+      Preloader: require("./utilities/preloader")
+    };
   });
 
 }).call(this);

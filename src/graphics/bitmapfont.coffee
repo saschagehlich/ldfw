@@ -1,5 +1,5 @@
 define (require, exports, module) ->
-  Rectangle = require "../math/rectangle.coffee"
+  Rectangle = require "../math/rectangle"
 
   class BitmapFont
     constructor: (@fontFile, @textureRegion) ->

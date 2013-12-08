@@ -1,7 +1,7 @@
 define (require, exports, module) ->
-  Sprite = require "./sprite.coffee"
-  AnimSprite = require "./animsprite.coffee"
-  TextureRegion = require "./textureregion.coffee"
+  Sprite = require "./sprite"
+  AnimSprite = require "./animsprite"
+  TextureRegion = require "./textureregion"
 
   class TextureAtlas
     constructor: (@frames, @image) -> return

@@ -1,0 +1,27 @@
+{
+  "name": "ldfw",
+  "main": "ldfw.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/saschagehlich/ldfw",
+  "authors": [
+    "Sascha Gehlich <sascha@gehlich.us>"
+  ],
+  "description": "HTML5 canvas framework for games",
+  "keywords": [
+    "canvas",
+    "html5",
+    "game",
+    "gaming",
+    "engine"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "eventEmitter": "~4.2.6",
+    "async": "~0.2.5"
+  }
+}

@@ -1,5 +1,5 @@
 define (require, exports, module) ->
-  Node = require "./node.coffee"
+  Node = require "./node"
 
   class Actor extends Node
     ###

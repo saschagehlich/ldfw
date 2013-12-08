@@ -1,6 +1,6 @@
 define (require, exports, module) ->
-  Vector2 = require "../math/vector2.coffee"
-  Sprite  = require "./sprite.coffee"
+  Vector2 = require "../math/vector2"
+  Sprite  = require "./sprite"
 
   class AnimSprite extends Sprite
     constructor: (@textureAtlas, @frame, @spriteCount, @animationInterval) ->

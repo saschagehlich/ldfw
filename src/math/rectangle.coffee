@@ -1,5 +1,5 @@
 define (require, exports, module) ->
-  Vector2 = require "./vector2.coffee"
+  Vector2 = require "./vector2"
 
   class Rectangle
     constructor: (x = 0, y = 0, @width = 0, @height = 0) ->

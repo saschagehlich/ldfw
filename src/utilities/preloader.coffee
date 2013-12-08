@@ -1,6 +1,6 @@
 define (require, exports, module) ->
-  {EventEmitter} = require "events"
-  async = require "../vendor/async.js"
+  EventEmitter = require "eventemitter"
+  async = require "async"
 
   class Preloader extends EventEmitter
     constructor: (@app, @itemFilenames) ->

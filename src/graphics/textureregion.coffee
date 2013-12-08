@@ -1,5 +1,5 @@
 define (require, exports, module) ->
-  Vector2 = require "../math/vector2.coffee"
+  Vector2 = require "../math/vector2"
 
   class TextureRegion
     constructor: (@atlas, @frame) ->

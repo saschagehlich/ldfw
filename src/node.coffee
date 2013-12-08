@@ -1,6 +1,6 @@
 define (require, exports, module) ->
-  Vector2   = require "./math/vector2.coffee"
-  Rectangle = require "./math/rectangle.coffee"
+  Vector2   = require "./math/vector2"
+  Rectangle = require "./math/rectangle"
 
   class Node
     constructor: (@game) ->

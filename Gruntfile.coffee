@@ -10,10 +10,16 @@ module.exports = (grunt) ->
         dest: "build"
         ext: ".js"
 
-    concat:
-      dist:
-        src: ['build/**/*.js']
-        dest: 'ldfw.js'
+    requirejs:
+      app:
+        options:
+          baseUrl: "build"
+          name: "ldfw"
+          out: "ldfw.js"
+          optimize: "none"
+          paths:
+            eventemitter: "empty:"
+            async: "empty:"
 
     uglify:
       dist:
@@ -27,9 +33,9 @@ module.exports = (grunt) ->
 
   grunt.loadNpmTasks "grunt-contrib-coffee"
   grunt.loadNpmTasks "grunt-contrib-watch"
-  grunt.loadNpmTasks "grunt-contrib-concat"
+  grunt.loadNpmTasks "grunt-contrib-requirejs"
   grunt.loadNpmTasks "grunt-contrib-uglify"
   grunt.loadNpmTasks "grunt-newer"
 
   grunt.registerTask "default", ["newer:coffee", "watch"]
-  grunt.registerTask "build", ["coffee", "concat", "uglify"]
+  grunt.registerTask "build", ["coffee", "requirejs", "uglify"]

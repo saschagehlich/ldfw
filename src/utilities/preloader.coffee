@@ -1,5 +1,4 @@
 EventEmitter = require "eventemitter"
-async = require "async"
 
 class Preloader extends EventEmitter
   constructor: (@app, @itemFilenames) ->
@@ -9,11 +8,19 @@ class Preloader extends EventEmitter
    * Starts the loading process
   ###
   load: ->
-    async.map @itemFilenames, @loadItem, (err, items) =>
-      for item in items
+    loadedItems = 0
+    totalItems = @itemFilenames.length
+
+    for file in @itemFilenames
+      @loadItem file, (err, item) =>
+        if err?
+          return @emit "error", err
+
         @items[item.filename] = item.item
 
-      @emit "done"
+        loadedItems++
+        if loadedItems is totalItems
+          @emit "done"
 
   ###
    * Returns the item for the given filename

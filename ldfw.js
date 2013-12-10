@@ -438,15 +438,16 @@ var requirejs, require, define;
 
 define("almond", function(){});
 
-define('utilities/animframe',['require','exports','module'],function (require, exports, module, exports, module) {
+define('utilities/animframe',['require','exports','module'],function (require, exports, module) {
   
 
-return module.exports = function () {
-    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
-      return window.setTimeout(callback, 1000 / 60);
-    };
-  }();
+module.exports = function () {
+  return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+    return window.setTimeout(callback, 1000 / 60);
+  };
+}();
 
+return module.exports;
 
 });
 define('game',['require', 'exports', 'module', './utilities/animframe'], function (require, exports, module) {

@@ -19,8 +19,5 @@
     "**/.*",
     "node_modules",
     "bower_components"
-  ],
-  "dependencies": {
-    "eventEmitter": "~4.2.6"
-  }
+  ]
 }

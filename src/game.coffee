@@ -1,3 +1,5 @@
+requestAnimFrame = require "./utilities/animframe"
+
 class Game
   constructor: (@wrapper, @debug = false) ->
     @canvas  = @wrapper.find("canvas").get(0)
@@ -9,7 +11,7 @@ class Game
     if @debug
       @setupStats()
 
-  clearScreen: ->
+  clearDisplay: ->
     @context.clearRect 0, 0, @canvas.width, @canvas.height
 
   ###
@@ -23,42 +25,6 @@ class Game
   getHeight: -> @canvas.height
 
   getWrapper: -> @wrapper
-
-  ###
-   * Sets up mrdoob's stats library
-  ###
-  setupStats: ->
-    @fpsStats = new Stats()
-    @fpsStats.setMode 0
-
-    dom = $(@fpsStats.domElement)
-    dom.css
-      position: "absolute"
-      left: -dom.width()
-      top: 0
-
-    @wrapper.append @fpsStats.domElement
-
-    @fpsMsStats = new Stats()
-    @fpsMsStats.setMode 1
-    dom = $(@fpsMsStats.domElement)
-    dom.css
-      position: "absolute"
-      left: -dom.width()
-      top: 50
-
-    @wrapper.append @fpsMsStats.domElement
-
-    @tickStats = new Stats()
-    @tickStats.setMode 1
-
-    dom = $(@tickStats.domElement)
-    dom.css
-      position: "absolute"
-      left: -dom.width()
-      top: 100
-
-    @wrapper.append @tickStats.domElement
 
   ###
    * Stats the game's run loop
@@ -82,16 +48,9 @@ class Game
     @lastTick = Date.now()
 
     # If we have a screen, make it tick!
-    @tickStats.begin() if @debug
     @screen?.update delta
-    @tickStats.end() if @debug
-
-    @fpsStats.begin() if @debug
-    @fpsMsStats.begin() if @debug
-    @clearScreen()
+    @clearDisplay()
     @screen?.draw @context
-    @fpsStats.end() if @debug
-    @fpsMsStats.end() if @debug
 
     if @running
       requestAnimFrame @tick

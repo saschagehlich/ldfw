@@ -438,14 +438,26 @@ var requirejs, require, define;
 
 define("almond", function(){});
 
-define('game',['require','exports','module'],function (require, exports, module) {
+define('utilities/animframe',['require','exports','module'],function (require, exports, module, exports, module) {
   
 
-var Game, __bind = function (fn, me) {
+return module.exports = function () {
+    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+      return window.setTimeout(callback, 1000 / 60);
+    };
+  }();
+
+
+});
+define('game',['require', 'exports', 'module', './utilities/animframe'], function (require, exports, module) {
+  
+
+var Game, requestAnimFrame, __bind = function (fn, me) {
     return function () {
       return fn.apply(me, arguments);
     };
   };
+requestAnimFrame = require("./utilities/animframe");
 Game = function () {
   function Game(wrapper, debug) {
     this.wrapper = wrapper;
@@ -459,7 +471,7 @@ Game = function () {
       this.setupStats();
     }
   }
-  Game.prototype.clearScreen = function () {
+  Game.prototype.clearDisplay = function () {
     return this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   };
   Game.prototype.setSize = function (width, height) {
@@ -475,36 +487,6 @@ Game = function () {
   Game.prototype.getWrapper = function () {
     return this.wrapper;
   };
-  Game.prototype.setupStats = function () {
-    var dom;
-    this.fpsStats = new Stats();
-    this.fpsStats.setMode(0);
-    dom = $(this.fpsStats.domElement);
-    dom.css({
-      position: "absolute",
-      left: -dom.width(),
-      top: 0
-    });
-    this.wrapper.append(this.fpsStats.domElement);
-    this.fpsMsStats = new Stats();
-    this.fpsMsStats.setMode(1);
-    dom = $(this.fpsMsStats.domElement);
-    dom.css({
-      position: "absolute",
-      left: -dom.width(),
-      top: 50
-    });
-    this.wrapper.append(this.fpsMsStats.domElement);
-    this.tickStats = new Stats();
-    this.tickStats.setMode(1);
-    dom = $(this.tickStats.domElement);
-    dom.css({
-      position: "absolute",
-      left: -dom.width(),
-      top: 100
-    });
-    return this.wrapper.append(this.tickStats.domElement);
-  };
   Game.prototype.run = function () {
     this.running = true;
     this.lastTick = new Date();
@@ -517,30 +499,12 @@ Game = function () {
     var delta, _ref, _ref1;
     delta = (Date.now() - this.lastTick) / 1000;
     this.lastTick = Date.now();
-    if (this.debug) {
-      this.tickStats.begin();
-    }
     if ((_ref = this.screen) != null) {
       _ref.update(delta);
     }
-    if (this.debug) {
-      this.tickStats.end();
-    }
-    if (this.debug) {
-      this.fpsStats.begin();
-    }
-    if (this.debug) {
-      this.fpsMsStats.begin();
-    }
-    this.clearScreen();
+    this.clearDisplay();
     if ((_ref1 = this.screen) != null) {
       _ref1.draw(this.context);
-    }
-    if (this.debug) {
-      this.fpsStats.end();
-    }
-    if (this.debug) {
-      this.fpsMsStats.end();
     }
     if (this.running) {
       return requestAnimFrame(this.tick);

@@ -1258,7 +1258,6 @@ define('utilities/eventemitter',['require','exports','module'],function (require
 var EventEmitter, __slice = [].slice;
 EventEmitter = function () {
   function EventEmitter() {
-    this.events = {};
   }
   EventEmitter.prototype.emit = function () {
     var args, event, listener, _i, _len, _ref;
@@ -1275,6 +1274,9 @@ EventEmitter = function () {
   };
   EventEmitter.prototype.bind = function (event, listener) {
     var _base;
+    if (this.events == null) {
+      this.events = {};
+    }
     ((_base = this.events)[event] != null ? (_base = this.events)[event] : _base[event] = []).push(listener);
     return this;
   };

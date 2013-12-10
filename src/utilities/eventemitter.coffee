@@ -1,13 +1,11 @@
 class EventEmitter
-  constructor: ->
-    @events = {}
-
   emit: (event, args...) ->
     return false unless @events[event]
     listener args... for listener in @events[event]
     return true
 
   bind: (event, listener) ->
+    @events ?= {}
     (@events[event]?=[]).push listener
     return @
 

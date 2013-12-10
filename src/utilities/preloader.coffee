@@ -1,4 +1,4 @@
-EventEmitter = require "eventemitter"
+EventEmitter = require "./eventemitter"
 
 class Preloader extends EventEmitter
   constructor: (@app, @itemFilenames) ->

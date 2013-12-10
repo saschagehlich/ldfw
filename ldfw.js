@@ -24,7 +24,7 @@ var __isAMD = !!(typeof define === 'function' && define.amd),
       child.__super__ = parent.prototype;
       return child;
     };
-var bundleFactory = function(EventEmitter, async) {
+var bundleFactory = function() {
 /**
  * almond 0.2.7 Copyright (c) 2011-2012, The Dojo Foundation All Rights Reserved.
  * Available via the MIT or new BSD license.
@@ -1251,24 +1251,79 @@ module.exports = TileMap;
 return module.exports;
 
 });
-define('eventemitter',[],function () {
-  if (__isNode) {
-  return __nodeRequire('eventemitter');
-} else {
-  return (typeof EventEmitter !== 'undefined') ? EventEmitter : __nodeRequire('eventemitter')
-}
-});
-define('async',[],function () {
-  if (__isNode) {
-  return __nodeRequire('async');
-} else {
-  return (typeof async !== 'undefined') ? async : __nodeRequire('async')
-}
-});
-define('utilities/preloader',['require', 'exports', 'module', 'eventemitter', 'async'], function (require, exports, module) {
+define('utilities/eventemitter',['require','exports','module'],function (require, exports, module) {
   
 
-var EventEmitter, Preloader, async, __bind = function (fn, me) {
+var EventEmitter, __slice = [].slice;
+EventEmitter = function () {
+  function EventEmitter() {
+    this.events = {};
+  }
+  EventEmitter.prototype.emit = function () {
+    var args, event, listener, _i, _len, _ref;
+    event = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    if (!this.events[event]) {
+      return false;
+    }
+    _ref = this.events[event];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      listener = _ref[_i];
+      listener.apply(null, args);
+    }
+    return true;
+  };
+  EventEmitter.prototype.bind = function (event, listener) {
+    var _base;
+    ((_base = this.events)[event] != null ? (_base = this.events)[event] : _base[event] = []).push(listener);
+    return this;
+  };
+  EventEmitter.prototype.once = function (event, listener) {
+    var fn, _this = this;
+    fn = function () {
+      _this.unbind(event, fn);
+      return listener.apply(null, arguments);
+    };
+    this.on(event, fn);
+    return this;
+  };
+  EventEmitter.prototype.unbind = function (event, listener) {
+    var l;
+    if (!this.events[event]) {
+      return this;
+    }
+    this.events[event] = function () {
+      var _i, _len, _ref, _results;
+      _ref = this.events[event];
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        l = _ref[_i];
+        if (l !== listener) {
+          _results.push(l);
+        }
+      }
+      return _results;
+    }.call(this);
+    return this;
+  };
+  EventEmitter.prototype.unbindAll = function (event) {
+    delete this.events[event];
+    return this;
+  };
+  EventEmitter.prototype.on = EventEmitter.prototype.bind;
+  EventEmitter.prototype.off = EventEmitter.prototype.unbind;
+  EventEmitter.prototype.addListener = EventEmitter.prototype.bind;
+  EventEmitter.prototype.removeListener = EventEmitter.prototype.unbind;
+  return EventEmitter;
+}();
+module.exports = EventEmitter;
+
+return module.exports;
+
+});
+define('utilities/preloader',['require', 'exports', 'module', './eventemitter'], function (require, exports, module) {
+  
+
+var EventEmitter, Preloader, __bind = function (fn, me) {
     return function () {
       return fn.apply(me, arguments);
     };
@@ -1285,8 +1340,7 @@ var EventEmitter, Preloader, async, __bind = function (fn, me) {
     child.__super__ = parent.prototype;
     return child;
   };
-EventEmitter = require("eventemitter");
-async = require("async");
+EventEmitter = require("./eventemitter");
 Preloader = function (_super) {
   __extends(Preloader, _super);
   function Preloader(app, itemFilenames) {
@@ -1299,15 +1353,25 @@ Preloader = function (_super) {
     this.items = {};
   }
   Preloader.prototype.load = function () {
-    var _this = this;
-    return async.map(this.itemFilenames, this.loadItem, function (err, items) {
-      var item, _i, _len;
-      for (_i = 0, _len = items.length; _i < _len; _i++) {
-        item = items[_i];
+    var file, loadedItems, totalItems, _i, _len, _ref, _results, _this = this;
+    loadedItems = 0;
+    totalItems = this.itemFilenames.length;
+    _ref = this.itemFilenames;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      file = _ref[_i];
+      _results.push(this.loadItem(file, function (err, item) {
+        if (err != null) {
+          return _this.emit("error", err);
+        }
         _this.items[item.filename] = item.item;
-      }
-      return _this.emit("done");
-    });
+        loadedItems++;
+        if (loadedItems === totalItems) {
+          return _this.emit("done");
+        }
+      }));
+    }
+    return _results;
   };
   Preloader.prototype.get = function (filename) {
     if (this.items[filename] == null) {
@@ -1425,12 +1489,12 @@ return module.exports;
 });    return require('ldfw');
   };
 if (__isAMD) {
-  return define(['eventemitter', 'async'], bundleFactory);
+  return define(bundleFactory);
 } else {
     if (__isNode) {
-        return module.exports = bundleFactory(require('eventemitter'), require('async'));
+        return module.exports = bundleFactory();
     } else {
-        return bundleFactory((typeof EventEmitter !== 'undefined') ? EventEmitter : void 0, (typeof async !== 'undefined') ? async : void 0);
+        return bundleFactory();
     }
 }
 }).call(this, (typeof exports === 'object' ? global : window),

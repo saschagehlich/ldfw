@@ -21,7 +21,6 @@
     "bower_components"
   ],
   "dependencies": {
-    "eventEmitter": "~4.2.6",
-    "async": "~0.2.5"
+    "eventEmitter": "~4.2.6"
   }
 }

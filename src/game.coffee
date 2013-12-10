@@ -32,7 +32,7 @@ class Game
   run: ->
     @running = true
     @lastTick = new Date()
-    requestAnimFrame @tick
+    requestAnimFrame @update
 
   ###
    * Stops / pauses the game's run loop
@@ -43,7 +43,7 @@ class Game
   ###
    * Our main game loop
   ###
-  tick: =>
+  update: (delta) =>
     delta = (Date.now() - @lastTick) / 1000
     @lastTick = Date.now()
 
@@ -53,6 +53,6 @@ class Game
     @screen?.draw @context
 
     if @running
-      requestAnimFrame @tick
+      requestAnimFrame @update
 
 module.exports = Game

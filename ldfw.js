@@ -463,7 +463,7 @@ Game = function () {
   function Game(wrapper, debug) {
     this.wrapper = wrapper;
     this.debug = debug != null ? debug : false;
-    this.tick = __bind(this.tick, this);
+    this.update = __bind(this.update, this);
     this.canvas = this.wrapper.find("canvas").get(0);
     this.setSize(this.wrapper.width(), this.wrapper.height());
     this.context = this.canvas.getContext("2d");
@@ -491,13 +491,13 @@ Game = function () {
   Game.prototype.run = function () {
     this.running = true;
     this.lastTick = new Date();
-    return requestAnimFrame(this.tick);
+    return requestAnimFrame(this.update);
   };
   Game.prototype.stop = function () {
     return this.running = false;
   };
-  Game.prototype.tick = function () {
-    var delta, _ref, _ref1;
+  Game.prototype.update = function (delta) {
+    var _ref, _ref1;
     delta = (Date.now() - this.lastTick) / 1000;
     this.lastTick = Date.now();
     if ((_ref = this.screen) != null) {
@@ -508,7 +508,7 @@ Game = function () {
       _ref1.draw(this.context);
     }
     if (this.running) {
-      return requestAnimFrame(this.tick);
+      return requestAnimFrame(this.update);
     }
   };
   return Game;

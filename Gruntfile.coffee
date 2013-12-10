@@ -2,40 +2,29 @@ fs = require "fs"
 
 module.exports = (grunt) ->
   grunt.initConfig
-    coffee:
-      compile:
-        expand: true
-        cwd: "src"
-        src: ["**/*.coffee"]
-        dest: "build"
-        ext: ".js"
-
-    requirejs:
-      app:
-        options:
-          baseUrl: "build"
-          name: "ldfw"
-          out: "ldfw.js"
-          optimize: "none"
-          paths:
-            eventemitter: "empty:"
-            async: "empty:"
-
-    uglify:
+    urequire:
       dist:
-        files:
-          "ldfw.min.js": ["ldfw.js"]
+        path: "./src"
+        main: "ldfw"
+        dstPath: "./ldfw.min.js"
+        template: "combined"
+        optimize: true
+
+      dev:
+        path: "./src"
+        main: "ldfw"
+        dstPath: "./ldfw.js"
+        template: "combined"
 
     watch:
-      coffee:
+      dev:
         files: ["src/**/*.coffee"]
-        tasks: "newer:coffee"
+        tasks: ["urequire:dev"]
+      options:
+        spawn: false
 
-  grunt.loadNpmTasks "grunt-contrib-coffee"
+  grunt.loadNpmTasks "grunt-urequire"
   grunt.loadNpmTasks "grunt-contrib-watch"
-  grunt.loadNpmTasks "grunt-contrib-requirejs"
-  grunt.loadNpmTasks "grunt-contrib-uglify"
-  grunt.loadNpmTasks "grunt-newer"
 
-  grunt.registerTask "default", ["newer:coffee", "watch"]
-  grunt.registerTask "build", ["coffee", "requirejs", "uglify"]
+  grunt.registerTask "build", ["urequire:dev", "urequire:dist"]
+  grunt.registerTask "default", ["urequire:dev", "watch"]

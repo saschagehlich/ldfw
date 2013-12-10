@@ -11,7 +11,7 @@ define (require, exports, module) ->
     TextureRegion: require "./graphics/textureregion"
     Sprite: require "./graphics/sprite"
     BitmapFont: require "./graphics/bitmapfont"
-    TileMap: require "./graphics/tilemap.coffee"
+    TileMap: require "./graphics/tilemap"
 
     # Math
     Vector2: require "./math/vector2"

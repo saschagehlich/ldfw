@@ -1073,6 +1073,175 @@
 }).call(this);
 
 (function() {
+  define('graphics/tilemap',['require','exports','module','../math/vector2','../node','../actor'],function(require, exports, module) {
+    var Actor, Node, TileMap, Vector2;
+    Vector2 = require("../math/vector2");
+    Node = require("../node");
+    Actor = require("../actor");
+    TileMap = (function() {
+      /*
+       * A TileMap represents a level or map that is composed by tiles.
+       * This class accepts jsons as exported by 'Tiled'
+       * @param  {game} @game
+       * @param  {tilesJson} @tilesJson
+       * @param  {image} @image
+      */
+
+      function TileMap(game, tilesJson, image) {
+        var layer, newLayer, _i, _len, _ref;
+        this.game = game;
+        this.image = image;
+        this.tileWidth = tilesJson['tileheight'];
+        this.tileHeight = tilesJson['tilewidth'];
+        this.tileSpacing = tilesJson['tilesets'][0]['spacing'];
+        this.layers = [];
+        _ref = tilesJson['layers'];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          layer = _ref[_i];
+          newLayer = layer['data'];
+          newLayer.width = layer['width'];
+          newLayer.height = layer['height'];
+          newLayer.scrollX = 0;
+          newLayer.scrollY = 0;
+          this.layers.push(newLayer);
+        }
+        this.numTilesOnTileSetX = (this.image.width - this.tileSpacing) / (this.tileWidth + this.tileSpacing);
+      }
+
+      /*
+       * Sets the scrollX position for all layers
+       * @param {number} scrollX
+      */
+
+
+      TileMap.prototype.setScrollX = function(scrollX) {
+        var layer, _i, _len, _ref, _results;
+        _ref = this.layers;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          layer = _ref[_i];
+          _results.push(layer.scrollX = scrollX);
+        }
+        return _results;
+      };
+
+      /*
+       * Sets the scrollY position for all layers
+       * @param {number} scrollY
+      */
+
+
+      TileMap.prototype.setScrollY = function(scrollY) {
+        var layer, _i, _len, _ref, _results;
+        _ref = this.layers;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          layer = _ref[_i];
+          _results.push(layer.scrollY = scrollY);
+        }
+        return _results;
+      };
+
+      /*
+       * Sets the scrollX position for a specific layer
+       * @param {number} layerIndex
+       * @param {number} scrollX
+      */
+
+
+      TileMap.prototype.setScrollX = function(layerIndex, scrollX) {
+        return this.layers[layerIndex].scrollX = scrollX;
+      };
+
+      /*
+       * Sets the scrollY position for a specific layer
+       * @param {number} layerIndex
+       * @param {number} scrollY
+      */
+
+
+      TileMap.prototype.setScrollY = function(layerIndex, scrollY) {
+        return this.layers[layerIndex].scrollY = scrollY;
+      };
+
+      /*
+       * Gets the scrollX position for a specific layer
+       * @param {number} layerIndex
+      */
+
+
+      TileMap.prototype.getScrollX = function(layerIndex) {
+        return this.layers[layerIndex].scrollX;
+      };
+
+      /*
+       * Gets the scrollY position for a specific layer
+       * @param {number} layerIndex
+      */
+
+
+      TileMap.prototype.getScrollY = function(layerIndex) {
+        return this.layers[layerIndex].scrollY;
+      };
+
+      /*
+       * Draws the TileMap on the given context
+       * @param  [CanvasRenderingContext2D] context
+      */
+
+
+      TileMap.prototype.draw = function(context) {
+        var dh, dw, index, indexOffsetX, indexOffsetY, layer, sh, softOffsetX, softOffsetY, sw, sx, sy, tileNumber, visibleTilesX, visibleTilesY, x, y, _i, _len, _ref, _results;
+        _ref = this.layers;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          layer = _ref[_i];
+          visibleTilesX = Math.ceil(this.game.getWidth() / this.tileWidth);
+          visibleTilesY = Math.ceil(this.game.getHeight() / this.tileHeight);
+          sw = this.tileWidth;
+          sh = this.tileHeight;
+          dw = this.tileWidth;
+          dh = this.tileHeight;
+          indexOffsetX = Math.floor(layer.scrollX / this.tileWidth);
+          indexOffsetY = Math.floor(layer.scrollY / this.tileHeight);
+          softOffsetX = layer.scrollX % this.tileWidth;
+          softOffsetY = layer.scrollY % this.tileHeight;
+          if (this.image != null) {
+            _results.push((function() {
+              var _j, _results1;
+              _results1 = [];
+              for (y = _j = 0; 0 <= visibleTilesY ? _j <= visibleTilesY : _j >= visibleTilesY; y = 0 <= visibleTilesY ? ++_j : --_j) {
+                _results1.push((function() {
+                  var _k, _results2;
+                  _results2 = [];
+                  for (x = _k = 0; 0 <= visibleTilesX ? _k <= visibleTilesX : _k >= visibleTilesX; x = 0 <= visibleTilesX ? ++_k : --_k) {
+                    index = x + indexOffsetX + (y + indexOffsetY) * layer.width;
+                    tileNumber = layer[index] - 1;
+                    sx = this.tileSpacing + (this.tileWidth + this.tileSpacing) * (tileNumber % this.numTilesOnTileSetX);
+                    sy = this.tileSpacing + (this.tileHeight + this.tileSpacing) * Math.floor(tileNumber / this.numTilesOnTileSetX);
+                    _results2.push(context.drawImage(this.image, sx, sy, sw, sh, x * dw - softOffsetX, y * dh - softOffsetY, dw, dh));
+                  }
+                  return _results2;
+                }).call(this));
+              }
+              return _results1;
+            }).call(this));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      };
+
+      return TileMap;
+
+    })();
+    return module.exports = TileMap;
+  });
+
+}).call(this);
+
+(function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1215,7 +1384,7 @@
 }).call(this);
 
 (function() {
-  define('ldfw',['require','exports','module','./game','./screen','./actor','./stage','./node','./graphics/textureatlas','./graphics/textureregion','./graphics/sprite','./graphics/bitmapfont','./math/vector2','./utilities/preloader'],function(require, exports, module) {
+  define('ldfw',['require','exports','module','./game','./screen','./actor','./stage','./node','./graphics/textureatlas','./graphics/textureregion','./graphics/sprite','./graphics/bitmapfont','./graphics/tilemap','./math/vector2','./utilities/preloader'],function(require, exports, module) {
     return module.exports = {
       Game: require("./game"),
       Screen: require("./screen"),
@@ -1226,6 +1395,7 @@
       TextureRegion: require("./graphics/textureregion"),
       Sprite: require("./graphics/sprite"),
       BitmapFont: require("./graphics/bitmapfont"),
+      TileMap: require("./graphics/tilemap"),
       Vector2: require("./math/vector2"),
       Preloader: require("./utilities/preloader")
     };

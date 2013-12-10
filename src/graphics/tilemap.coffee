@@ -1,7 +1,7 @@
 define (require, exports, module) ->
-  Vector2 = require "../math/vector2.coffee"
-  Node    = require "../node.coffee"
-  Actor    = require "../actor.coffee"
+  Vector2 = require "../math/vector2"
+  Node    = require "../node"
+  Actor    = require "../actor"
 
   class TileMap
     ###

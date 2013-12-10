@@ -18,6 +18,7 @@ LDFW =
 
   # Utilities
   Preloader: require "./utilities/preloader.coffee"
+  Keyboard: require "./utilities/keyboard.coffee"
 
 extend = (prototypeProperties) ->
   parent = this

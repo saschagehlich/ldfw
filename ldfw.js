@@ -1442,7 +1442,156 @@ module.exports = Preloader;
 return module.exports;
 
 });
-define('ldfw',['require', 'exports', 'module', './game', './screen', './actor', './stage', './node', './graphics/textureatlas', './graphics/textureregion', './graphics/sprite', './graphics/bitmapfont', './graphics/tilemap', './math/vector2', './math/rectangle', './utilities/preloader'], function (require, exports, module) {
+define('utilities/keyboard',['require', 'exports', 'module', './eventemitter'], function (require, exports, module) {
+  
+
+var EventEmitter, Keyboard, __bind = function (fn, me) {
+    return function () {
+      return fn.apply(me, arguments);
+    };
+  }, __hasProp = {}.hasOwnProperty, __extends = function (child, parent) {
+    for (var key in parent) {
+      if (__hasProp.call(parent, key))
+        child[key] = parent[key];
+    }
+    function ctor() {
+      this.constructor = child;
+    }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor();
+    child.__super__ = parent.prototype;
+    return child;
+  };
+EventEmitter = require("./eventemitter");
+Keyboard = function (_super) {
+  __extends(Keyboard, _super);
+  Keyboard.prototype.Keys = {
+    LEFT: 37,
+    UP: 38,
+    RIGHT: 39,
+    DOWN: 40,
+    "0": 48,
+    "1": 49,
+    "2": 50,
+    "3": 51,
+    "4": 52,
+    "5": 53,
+    "6": 54,
+    "7": 55,
+    "8": 56,
+    "9": 57,
+    A: 65,
+    B: 66,
+    C: 67,
+    D: 68,
+    E: 69,
+    F: 70,
+    G: 71,
+    H: 72,
+    I: 73,
+    J: 74,
+    K: 75,
+    L: 76,
+    M: 77,
+    N: 78,
+    O: 79,
+    P: 80,
+    Q: 81,
+    R: 82,
+    S: 83,
+    T: 84,
+    U: 85,
+    V: 86,
+    W: 87,
+    X: 88,
+    Y: 89,
+    Z: 90,
+    NUMPAD0: 96,
+    NUMPAD1: 97,
+    NUMPAD2: 98,
+    NUMPAD3: 99,
+    NUMPAD4: 100,
+    NUMPAD5: 101,
+    NUMPAD6: 102,
+    NUMPAD7: 103,
+    NUMPAD8: 104,
+    NUMPAD9: 105,
+    ASTERISK: 106,
+    PLUS: 107,
+    MINUS: 109,
+    DOT: 110,
+    SLASH: 111,
+    F1: 112,
+    F2: 113,
+    F3: 114,
+    F4: 115,
+    F5: 116,
+    F6: 117,
+    F7: 118,
+    F8: 119,
+    F9: 120,
+    F10: 121,
+    F11: 122,
+    F12: 123,
+    SHIFT: 16,
+    SPACE: 32,
+    ENTER: 13,
+    ESC: 27
+  };
+  function Keyboard() {
+    this._onKeyUp = __bind(this._onKeyUp, this);
+    this._onKeyDown = __bind(this._onKeyDown, this);
+    var key, keyCode, _ref;
+    this.keyStates = [];
+    _ref = this.Keys;
+    for (key in _ref) {
+      keyCode = _ref[key];
+      this.keyStates[keyCode] = false;
+    }
+    $(window).keydown(this._onKeyDown);
+    $(window).keyup(this._onKeyUp);
+  }
+  Keyboard.prototype._onKeyDown = function (e) {
+    var keyCode, _ref;
+    if ((_ref = e.keyCode) === this.Keys.UP || _ref === this.Keys.RIGHT || _ref === this.Keys.DOWN || _ref === this.Keys.LEFT || _ref === this.Keys.SPACE) {
+      e.preventDefault();
+    }
+    this.emit("keydown", e);
+    keyCode = e.keyCode;
+    if (this.keyStates[keyCode] != null) {
+      return this.keyStates[keyCode] = true;
+    }
+  };
+  Keyboard.prototype._onKeyUp = function (e) {
+    var keyCode;
+    keyCode = e.keyCode;
+    if (this.keyStates[keyCode] != null) {
+      return this.keyStates[keyCode] = false;
+    }
+  };
+  Keyboard.prototype.pressed = function (keyCode) {
+    return this.keyStates[keyCode] || false;
+  };
+  Keyboard.prototype.upPressed = function () {
+    return this.keyStates[this.Keys.UP] || this.keyStates[this.Keys.W] || this.keyStates[this.Keys.SPACE];
+  };
+  Keyboard.prototype.leftPressed = function () {
+    return this.keyStates[this.Keys.DOWN] || this.keyStates[this.Keys.S];
+  };
+  Keyboard.prototype.leftPressed = function () {
+    return this.keyStates[this.Keys.LEFT] || this.keyStates[this.Keys.A];
+  };
+  Keyboard.prototype.rightPressed = function () {
+    return this.keyStates[this.Keys.RIGHT] || this.keyStates[this.Keys.D];
+  };
+  return Keyboard;
+}(EventEmitter);
+module.exports = Keyboard;
+
+return module.exports;
+
+});
+define('ldfw',['require', 'exports', 'module', './game', './screen', './actor', './stage', './node', './graphics/textureatlas', './graphics/textureregion', './graphics/sprite', './graphics/bitmapfont', './graphics/tilemap', './math/vector2', './math/rectangle', './utilities/preloader', './utilities/keyboard'], function (require, exports, module) {
   
 
 var LDFW, extend, mod, _i, _len, _ref;
@@ -1459,7 +1608,8 @@ LDFW = {
   TileMap: require("./graphics/tilemap"),
   Vector2: require("./math/vector2"),
   Rectangle: require("./math/rectangle"),
-  Preloader: require("./utilities/preloader")
+  Preloader: require("./utilities/preloader"),
+  Keyboard: require("./utilities/keyboard")
 };
 extend = function (prototypeProperties) {
   var Surrogate, child, name, parent, prop;

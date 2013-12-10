@@ -24,7 +24,7 @@ var __isAMD = !!(typeof define === 'function' && define.amd),
       child.__super__ = parent.prototype;
       return child;
     };
-var bundleFactory = function() {
+var bundleFactory = function($) {
 /**
  * almond 0.2.7 Copyright (c) 2011-2012, The Dojo Foundation All Rights Reserved.
  * Available via the MIT or new BSD license.
@@ -1320,10 +1320,17 @@ module.exports = EventEmitter;
 return module.exports;
 
 });
-define('utilities/preloader',['require', 'exports', 'module', './eventemitter'], function (require, exports, module) {
+define('jquery',[],function () {
+  if (__isNode) {
+  return __nodeRequire('jquery');
+} else {
+  return (typeof $ !== 'undefined') ? $ : __nodeRequire('jquery')
+}
+});
+define('utilities/preloader',['require', 'exports', 'module', './eventemitter', 'jquery'], function (require, exports, module) {
   
 
-var EventEmitter, Preloader, __bind = function (fn, me) {
+var $, EventEmitter, Preloader, __bind = function (fn, me) {
     return function () {
       return fn.apply(me, arguments);
     };
@@ -1341,6 +1348,7 @@ var EventEmitter, Preloader, __bind = function (fn, me) {
     return child;
   };
 EventEmitter = require("./eventemitter");
+$ = require("jquery");
 Preloader = function (_super) {
   __extends(Preloader, _super);
   function Preloader(app, itemFilenames) {
@@ -1489,12 +1497,12 @@ return module.exports;
 });    return require('ldfw');
   };
 if (__isAMD) {
-  return define(bundleFactory);
+  return define(['jquery'], bundleFactory);
 } else {
     if (__isNode) {
-        return module.exports = bundleFactory();
+        return module.exports = bundleFactory(require('jquery'));
     } else {
-        return bundleFactory();
+        return bundleFactory((typeof $ !== 'undefined') ? $ : void 0);
     }
 }
 }).call(this, (typeof exports === 'object' ? global : window),

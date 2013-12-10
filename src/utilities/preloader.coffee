@@ -1,4 +1,5 @@
 EventEmitter = require "./eventemitter"
+$ = require "jquery"
 
 class Preloader extends EventEmitter
   constructor: (@app, @itemFilenames) ->

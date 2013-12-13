@@ -463,7 +463,7 @@ Game = function () {
   function Game(wrapper, debug) {
     this.wrapper = wrapper;
     this.debug = debug != null ? debug : false;
-    this.update = __bind(this.update, this);
+    this.tick = __bind(this.tick, this);
     this.canvas = this.wrapper.find("canvas").get(0);
     this.setSize(this.wrapper.width(), this.wrapper.height());
     this.context = this.canvas.getContext("2d");
@@ -491,15 +491,18 @@ Game = function () {
   Game.prototype.run = function () {
     this.running = true;
     this.lastTick = new Date();
-    return requestAnimFrame(this.update);
+    return requestAnimFrame(this.tick);
   };
   Game.prototype.stop = function () {
     return this.running = false;
   };
   Game.prototype.update = function (delta) {
-    var _ref, _ref1;
+  };
+  Game.prototype.tick = function () {
+    var delta, _ref, _ref1;
     delta = (Date.now() - this.lastTick) / 1000;
     this.lastTick = Date.now();
+    this.update(delta);
     if ((_ref = this.screen) != null) {
       _ref.update(delta);
     }
@@ -508,7 +511,7 @@ Game = function () {
       _ref1.draw(this.context);
     }
     if (this.running) {
-      return requestAnimFrame(this.update);
+      return requestAnimFrame(this.tick);
     }
   };
   return Game;
@@ -1262,6 +1265,9 @@ EventEmitter = function () {
   EventEmitter.prototype.emit = function () {
     var args, event, listener, _i, _len, _ref;
     event = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    if (this.events == null) {
+      this.events = {};
+    }
     if (!this.events[event]) {
       return false;
     }
@@ -1291,6 +1297,9 @@ EventEmitter = function () {
   };
   EventEmitter.prototype.unbind = function (event, listener) {
     var l;
+    if (this.events == null) {
+      this.events = {};
+    }
     if (!this.events[event]) {
       return this;
     }
@@ -1309,6 +1318,9 @@ EventEmitter = function () {
     return this;
   };
   EventEmitter.prototype.unbindAll = function (event) {
+    if (this.events == null) {
+      this.events = {};
+    }
     delete this.events[event];
     return this;
   };

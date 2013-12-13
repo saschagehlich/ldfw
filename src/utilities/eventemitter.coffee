@@ -1,5 +1,6 @@
 class EventEmitter
   emit: (event, args...) ->
+    @events ?= {}
     return false unless @events[event]
     listener args... for listener in @events[event]
     return true
@@ -17,11 +18,13 @@ class EventEmitter
     return @
 
   unbind: (event, listener) ->
+    @events ?= {}
     return @ unless @events[event]
     @events[event] = (l for l in @events[event] when l isnt listener)
     return @
 
   unbindAll: (event) ->
+    @events ?= {}
     delete @events[event]
     return @
 

@@ -1,6 +1,7 @@
 Vector2 = require "../math/vector2.coffee"
-Node    = require "../node.coffee"
+Node = require "../node.coffee"
 
+module.exports =
 class Sprite extends Node
   ###
    * A Sprite represents a drawable image
@@ -51,5 +52,3 @@ class Sprite extends Node
     context.drawImage image, sx, sy, sw, sh, -@origin.x, -@origin.y, dw, dh
 
     context.restore()
-
-module.exports = Sprite

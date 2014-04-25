@@ -10,20 +10,6 @@ var __isAMD = !!(typeof define === 'function' && define.amd),
       function(dep){
         throw new Error("uRequire detected missing dependency: '" + dep + "' - in a non-nodejs runtime. All it's binding variables were 'undefined'.")
       });
-
-  var __hasProp = {}.hasOwnProperty, __extends = function (child, parent) {
-      for (var key in parent) {
-        if (__hasProp.call(parent, key))
-          child[key] = parent[key];
-      }
-      function ctor() {
-        this.constructor = child;
-      }
-      ctor.prototype = parent.prototype;
-      child.prototype = new ctor();
-      child.__super__ = parent.prototype;
-      return child;
-    };
 var bundleFactory = function($) {
 /**
  * almond 0.2.7 Copyright (c) 2011-2012, The Dojo Foundation All Rights Reserved.
@@ -459,7 +445,7 @@ var Game, requestAnimFrame, __bind = function (fn, me) {
     };
   };
 requestAnimFrame = require("./utilities/animframe");
-Game = function () {
+module.exports = Game = function () {
   function Game(wrapper, debug) {
     this.wrapper = wrapper;
     this.debug = debug != null ? debug : false;
@@ -516,7 +502,6 @@ Game = function () {
   };
   return Game;
 }();
-module.exports = Game;
 
 return module.exports;
 
@@ -525,7 +510,7 @@ define('screen',['require','exports','module'],function (require, exports, modul
   
 
 var Screen;
-Screen = function () {
+module.exports = Screen = function () {
   function Screen(game) {
     this.game = game;
     return;
@@ -536,7 +521,6 @@ Screen = function () {
   };
   return Screen;
 }();
-module.exports = Screen;
 
 return module.exports;
 
@@ -545,7 +529,7 @@ define('math/vector2',['require','exports','module'],function (require, exports,
   
 
 var Vector2;
-Vector2 = function () {
+module.exports = Vector2 = function () {
   function Vector2(x, y) {
     this.x = x != null ? x : 0;
     this.y = y != null ? y : 0;
@@ -642,7 +626,6 @@ Vector2 = function () {
   };
   return Vector2;
 }();
-module.exports = Vector2;
 
 return module.exports;
 
@@ -652,7 +635,7 @@ define('math/rectangle',['require', 'exports', 'module', './vector2'], function 
 
 var Rectangle, Vector2;
 Vector2 = require("./vector2");
-Rectangle = function () {
+module.exports = Rectangle = function () {
   function Rectangle(x, y, width, height) {
     if (x == null) {
       x = 0;
@@ -679,7 +662,6 @@ Rectangle = function () {
   };
   return Rectangle;
 }();
-module.exports = Rectangle;
 
 return module.exports;
 
@@ -690,7 +672,7 @@ define('node',['require', 'exports', 'module', './math/vector2', './math/rectang
 var Node, Rectangle, Vector2;
 Vector2 = require("./math/vector2");
 Rectangle = require("./math/rectangle");
-Node = function () {
+module.exports = Node = function () {
   function Node(game) {
     this.game = game;
     this.origin = new Vector2();
@@ -766,7 +748,6 @@ Node = function () {
   };
   return Node;
 }();
-module.exports = Node;
 
 return module.exports;
 
@@ -788,7 +769,7 @@ var Actor, Node, __hasProp = {}.hasOwnProperty, __extends = function (child, par
     return child;
   };
 Node = require("./node");
-Actor = function (_super) {
+module.exports = Actor = function (_super) {
   __extends(Actor, _super);
   function Actor(game) {
     this.game = game;
@@ -800,7 +781,6 @@ Actor = function (_super) {
   };
   return Actor;
 }(Node);
-module.exports = Actor;
 
 return module.exports;
 
@@ -809,7 +789,7 @@ define('stage',['require','exports','module'],function (require, exports, module
   
 
 var Stage;
-Stage = function () {
+module.exports = Stage = function () {
   function Stage(game) {
     this.game = game;
     this.actors = [];
@@ -846,7 +826,6 @@ Stage = function () {
   };
   return Stage;
 }();
-module.exports = Stage;
 
 return module.exports;
 
@@ -869,7 +848,7 @@ var Node, Sprite, Vector2, __hasProp = {}.hasOwnProperty, __extends = function (
   };
 Vector2 = require("../math/vector2");
 Node = require("../node");
-Sprite = function (_super) {
+module.exports = Sprite = function (_super) {
   __extends(Sprite, _super);
   Sprite.renderOffset = new Vector2(0, 0);
   function Sprite(textureAtlas, frame) {
@@ -917,82 +896,93 @@ Sprite = function (_super) {
   };
   return Sprite;
 }(Node);
-module.exports = Sprite;
 
 return module.exports;
 
 });
-define('graphics/animsprite',['require', 'exports', 'module', '../math/vector2', './sprite'], function (require, exports, module, exports, module) {
+define('graphics/animsprite',['require', 'exports', 'module', '../math/vector2', './sprite'], function (require, exports, module) {
   
 
-var AnimSprite, Sprite, Vector2;
-  Vector2 = require("../math/vector2");
-  Sprite = require("./sprite");
-  AnimSprite = function (_super) {
-    __extends(AnimSprite, _super);
-    function AnimSprite(textureAtlas, frame, spriteCount, animationInterval) {
-      this.textureAtlas = textureAtlas;
-      this.frame = frame;
-      this.spriteCount = spriteCount;
-      this.animationInterval = animationInterval;
-      AnimSprite.__super__.constructor.apply(this, arguments);
-      this.rotation = 0;
-      this.sumDelta = 0;
-      this.spriteIndex = 0;
+var AnimSprite, Sprite, Vector2, __hasProp = {}.hasOwnProperty, __extends = function (child, parent) {
+    for (var key in parent) {
+      if (__hasProp.call(parent, key))
+        child[key] = parent[key];
     }
-    AnimSprite.prototype.getWidth = function () {
-      return this.frame.frame.w * this.scale.x;
-    };
-    AnimSprite.prototype.getHeight = function () {
-      return this.frame.frame.h * this.scale.y;
-    };
-    AnimSprite.prototype.getRotation = function () {
-      return this.rotation;
-    };
-    AnimSprite.prototype.setRotation = function (rotation) {
-      return this.rotation = rotation;
-    };
-    AnimSprite.prototype.update = function (delta) {
-      if (this.sumDelta >= this.animationInterval) {
-        this.spriteIndex++;
-        if (this.spriteIndex > this.spriteCount - 1) {
-          this.spriteIndex = 0;
-        }
-        this.sumDelta -= this.animationInterval;
+    function ctor() {
+      this.constructor = child;
+    }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor();
+    child.__super__ = parent.prototype;
+    return child;
+  };
+Vector2 = require("../math/vector2");
+Sprite = require("./sprite");
+module.exports = AnimSprite = function (_super) {
+  __extends(AnimSprite, _super);
+  function AnimSprite(textureAtlas, frame, spriteCount, animationInterval) {
+    this.textureAtlas = textureAtlas;
+    this.frame = frame;
+    this.spriteCount = spriteCount;
+    this.animationInterval = animationInterval;
+    AnimSprite.__super__.constructor.apply(this, arguments);
+    this.rotation = 0;
+    this.sumDelta = 0;
+    this.spriteIndex = 0;
+  }
+  AnimSprite.prototype.getWidth = function () {
+    return this.frame.frame.w * this.scale.x;
+  };
+  AnimSprite.prototype.getHeight = function () {
+    return this.frame.frame.h * this.scale.y;
+  };
+  AnimSprite.prototype.getRotation = function () {
+    return this.rotation;
+  };
+  AnimSprite.prototype.setRotation = function (rotation) {
+    return this.rotation = rotation;
+  };
+  AnimSprite.prototype.update = function (delta) {
+    if (this.sumDelta >= this.animationInterval) {
+      this.spriteIndex++;
+      if (this.spriteIndex > this.spriteCount - 1) {
+        this.spriteIndex = 0;
       }
-      return this.sumDelta += delta;
-    };
-    AnimSprite.prototype.draw = function (context, drawX, drawY, mirrored) {
-      var dh, dw, image, sh, sw, sx, sy, tx, ty, widthPerSprite;
-      if (mirrored == null) {
-        mirrored = false;
-      }
-      image = this.textureAtlas.getAtlasImage();
-      widthPerSprite = Math.floor(this.frame.frame.w / this.spriteCount);
-      sx = this.frame.frame.x;
-      sy = this.frame.frame.y;
-      sw = widthPerSprite;
-      sh = this.frame.frame.h;
-      sx += widthPerSprite * this.spriteIndex;
-      dw = widthPerSprite * this.scale.x;
-      dh = this.frame.frame.h * this.scale.y;
-      context.save();
-      tx = (drawX | this.position.x) + this.origin.x + Sprite.renderOffset.x;
-      ty = (drawY | this.position.y) + this.origin.y + Sprite.renderOffset.y;
-      if (mirrored) {
-        context.translate(tx + dw, ty);
-        context.scale(-1, 1);
-      } else {
-        context.translate(tx, ty);
-      }
-      context.rotate(Math.PI / 180 * this.rotation);
-      context.drawImage(image, sx, sy, sw, sh, -this.origin.x, -this.origin.y, dw, dh);
-      return context.restore();
-    };
-    return AnimSprite;
-  }(Sprite);
-  return module.exports = AnimSprite;
+      this.sumDelta -= this.animationInterval;
+    }
+    return this.sumDelta += delta;
+  };
+  AnimSprite.prototype.draw = function (context, drawX, drawY, mirrored) {
+    var dh, dw, image, sh, sw, sx, sy, tx, ty, widthPerSprite;
+    if (mirrored == null) {
+      mirrored = false;
+    }
+    image = this.textureAtlas.getAtlasImage();
+    widthPerSprite = Math.floor(this.frame.frame.w / this.spriteCount);
+    sx = this.frame.frame.x;
+    sy = this.frame.frame.y;
+    sw = widthPerSprite;
+    sh = this.frame.frame.h;
+    sx += widthPerSprite * this.spriteIndex;
+    dw = widthPerSprite * this.scale.x;
+    dh = this.frame.frame.h * this.scale.y;
+    context.save();
+    tx = (drawX | this.position.x) + this.origin.x + Sprite.renderOffset.x;
+    ty = (drawY | this.position.y) + this.origin.y + Sprite.renderOffset.y;
+    if (mirrored) {
+      context.translate(tx + dw, ty);
+      context.scale(-1, 1);
+    } else {
+      context.translate(tx, ty);
+    }
+    context.rotate(Math.PI / 180 * this.rotation);
+    context.drawImage(image, sx, sy, sw, sh, -this.origin.x, -this.origin.y, dw, dh);
+    return context.restore();
+  };
+  return AnimSprite;
+}(Sprite);
 
+return module.exports;
 
 });
 define('graphics/textureregion',['require', 'exports', 'module', '../math/vector2'], function (require, exports, module) {
@@ -1000,7 +990,7 @@ define('graphics/textureregion',['require', 'exports', 'module', '../math/vector
 
 var TextureRegion, Vector2;
 Vector2 = require("../math/vector2");
-TextureRegion = function () {
+module.exports = TextureRegion = function () {
   function TextureRegion(atlas, frame) {
     this.atlas = atlas;
     this.frame = frame;
@@ -1021,7 +1011,6 @@ TextureRegion = function () {
   };
   return TextureRegion;
 }();
-module.exports = TextureRegion;
 
 return module.exports;
 
@@ -1033,7 +1022,7 @@ var AnimSprite, Sprite, TextureAtlas, TextureRegion;
 Sprite = require("./sprite");
 AnimSprite = require("./animsprite");
 TextureRegion = require("./textureregion");
-TextureAtlas = function () {
+module.exports = TextureAtlas = function () {
   function TextureAtlas(frames, image) {
     this.frames = frames;
     this.image = image;
@@ -1068,7 +1057,6 @@ TextureAtlas = function () {
   };
   return TextureAtlas;
 }();
-module.exports = TextureAtlas;
 
 return module.exports;
 
@@ -1153,7 +1141,7 @@ var Actor, Node, TileMap, Vector2;
 Vector2 = require("../math/vector2");
 Node = require("../node");
 Actor = require("../actor");
-TileMap = function () {
+module.exports = TileMap = function () {
   function TileMap(game, tilesJson, image) {
     var layer, newLayer, _i, _len, _ref;
     this.game = game;
@@ -1250,7 +1238,6 @@ TileMap = function () {
   };
   return TileMap;
 }();
-module.exports = TileMap;
 
 return module.exports;
 
@@ -1259,7 +1246,7 @@ define('utilities/eventemitter',['require','exports','module'],function (require
   
 
 var EventEmitter, __slice = [].slice;
-EventEmitter = function () {
+module.exports = EventEmitter = function () {
   function EventEmitter() {
   }
   EventEmitter.prototype.emit = function () {
@@ -1330,7 +1317,6 @@ EventEmitter = function () {
   EventEmitter.prototype.removeListener = EventEmitter.prototype.unbind;
   return EventEmitter;
 }();
-module.exports = EventEmitter;
 
 return module.exports;
 
@@ -1364,7 +1350,7 @@ var $, EventEmitter, Preloader, __bind = function (fn, me) {
   };
 EventEmitter = require("./eventemitter");
 $ = require("jquery");
-Preloader = function (_super) {
+module.exports = Preloader = function (_super) {
   __extends(Preloader, _super);
   function Preloader(app, itemFilenames) {
     this.app = app;
@@ -1449,7 +1435,6 @@ Preloader = function (_super) {
   };
   return Preloader;
 }(EventEmitter);
-module.exports = Preloader;
 
 return module.exports;
 
@@ -1475,7 +1460,7 @@ var EventEmitter, Keyboard, __bind = function (fn, me) {
     return child;
   };
 EventEmitter = require("./eventemitter");
-Keyboard = function (_super) {
+module.exports = Keyboard = function (_super) {
   __extends(Keyboard, _super);
   Keyboard.prototype.Keys = {
     LEFT: 37,
@@ -1598,7 +1583,6 @@ Keyboard = function (_super) {
   };
   return Keyboard;
 }(EventEmitter);
-module.exports = Keyboard;
 
 return module.exports;
 

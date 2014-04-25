@@ -1,5 +1,6 @@
 requestAnimFrame = require "./utilities/animframe"
 
+module.exports =
 class Game
   constructor: (@wrapper, @debug = false) ->
     @canvas  = @wrapper.find("canvas").get(0)
@@ -63,5 +64,3 @@ class Game
 
     if @running
       requestAnimFrame @tick
-
-module.exports = Game

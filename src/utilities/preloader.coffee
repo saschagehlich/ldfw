@@ -1,6 +1,7 @@
 EventEmitter = require "./eventemitter"
 $ = require "jquery"
 
+module.exports =
 class Preloader extends EventEmitter
   constructor: (@app, @itemFilenames) ->
     @items = {}
@@ -90,5 +91,3 @@ class Preloader extends EventEmitter
   loadPNG:  => @loadImage.apply(this, arguments)
   loadJPG:  => @loadImage.apply(this, arguments)
   loadJPEG: => @loadImage.apply(this, arguments)
-
-module.exports = Preloader

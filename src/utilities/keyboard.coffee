@@ -5,6 +5,7 @@ EventEmitter = require "./eventemitter"
  * can be asked whether a specific key is currently pressed
  * or not
 ###
+module.exports =
 class Keyboard extends EventEmitter
   Keys:
     LEFT: 37
@@ -173,5 +174,3 @@ class Keyboard extends EventEmitter
   ###
   rightPressed: ->
     return @keyStates[@Keys.RIGHT] || @keyStates[@Keys.D]
-
-module.exports = Keyboard

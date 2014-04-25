@@ -1,3 +1,4 @@
+module.exports =
 class Vector2
   constructor: (@x = 0, @y = 0) -> return
 
@@ -137,5 +138,3 @@ class Vector2
    * @param [Number] y
   ###
   setY: (y) -> @y = y
-
-module.exports = Vector2

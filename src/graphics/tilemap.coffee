@@ -1,7 +1,8 @@
 Vector2 = require "../math/vector2.coffee"
-Node    = require "../node.coffee"
-Actor    = require "../actor.coffee"
+Node = require "../node.coffee"
+Actor = require "../actor.coffee"
 
+module.exports =
 class TileMap
   ###
    * A TileMap represents a level or map that is composed by tiles.
@@ -103,5 +104,3 @@ class TileMap
             sy = @tileSpacing + (@tileHeight + @tileSpacing) * Math.floor(tileNumber / @numTilesOnTileSetX)
 
             context.drawImage @image, sx, sy, sw, sh, x * dw - softOffsetX, y * dh - softOffsetY, dw, dh
-
-module.exports = TileMap

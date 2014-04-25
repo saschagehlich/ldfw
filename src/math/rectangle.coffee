@@ -1,5 +1,6 @@
 Vector2 = require "./vector2.coffee"
 
+module.exports =
 class Rectangle
   constructor: (x = 0, y = 0, @width = 0, @height = 0) ->
     @position = new Vector2(x, y)
@@ -20,5 +21,3 @@ class Rectangle
 
   getWidth: -> @width
   getHeight: -> @height
-
-module.exports = Rectangle

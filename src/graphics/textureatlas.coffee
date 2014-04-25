@@ -2,6 +2,7 @@ Sprite = require "./sprite.coffee"
 AnimSprite = require "./animsprite.coffee"
 TextureRegion = require "./textureregion.coffee"
 
+module.exports =
 class TextureAtlas
   constructor: (@frames, @image) -> return
 
@@ -43,5 +44,3 @@ class TextureAtlas
     return region
 
   getAtlasImage: -> @image
-
-module.exports = TextureAtlas

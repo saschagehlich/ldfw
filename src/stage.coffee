@@ -1,3 +1,4 @@
+module.exports =
 class Stage
   ###
    * @param  [Game] game
@@ -38,5 +39,3 @@ class Stage
   draw: (context) ->
     for actor in @actors
       actor.draw context
-
-module.exports = Stage

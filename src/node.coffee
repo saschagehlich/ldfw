@@ -1,6 +1,7 @@
 Vector2   = require "./math/vector2.coffee"
 Rectangle = require "./math/rectangle.coffee"
 
+module.exports =
 class Node
   constructor: (@game) ->
     @origin   = new Vector2()
@@ -52,6 +53,3 @@ class Node
 
   getWidth: -> @rect.getWidth()
   getHeight: -> @rect.getHeight()
-
-
-module.exports = Node

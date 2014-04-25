@@ -1,5 +1,6 @@
 Node = require "./node.coffee"
 
+module.exports =
 class Actor extends Node
   ###
    * @param  [Game] game
@@ -21,5 +22,3 @@ class Actor extends Node
   ###
   draw: (context) ->
     return
-
-module.exports = Actor

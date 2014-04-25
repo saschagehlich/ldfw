@@ -1,3 +1,4 @@
+module.exports =
 class Screen
   ###
    * @param  [Game] game
@@ -19,5 +20,3 @@ class Screen
   ###
   draw: (context) ->
     return
-
-module.exports = Screen

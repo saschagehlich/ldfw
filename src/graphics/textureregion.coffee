@@ -1,5 +1,6 @@
 Vector2 = require "../math/vector2.coffee"
 
+module.exports =
 class TextureRegion
   constructor: (@atlas, @frame) ->
     @image = @atlas.getAtlasImage()
@@ -30,5 +31,3 @@ class TextureRegion
       dx, dy,
       dw, dh
     )
-
-module.exports = TextureRegion

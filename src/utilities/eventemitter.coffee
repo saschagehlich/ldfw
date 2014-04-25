@@ -1,3 +1,4 @@
+module.exports =
 class EventEmitter
   emit: (event, args...) ->
     @events ?= {}
@@ -32,5 +33,3 @@ class EventEmitter
   off: @::unbind
   addListener: @::bind
   removeListener: @::unbind
-
-module.exports = EventEmitter

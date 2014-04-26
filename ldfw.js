@@ -887,16 +887,12 @@ module.exports = Sprite = function (_super) {
     context.save();
     tx = Math.round((drawX || this.position.x) + this.origin.x + Sprite.renderOffset.x);
     ty = Math.round((drawY || this.position.y) + this.origin.y + Sprite.renderOffset.y);
-    if (mirrored) {
-      scaleX = mirroredX ? -1 : 1;
-      scaleY = mirroredY ? -1 : 1;
-      translateX = mirroredX ? tx + dw : tx;
-      translateY = mirroredY ? ty + dh : ty;
-      context.translate(translateX, translateY);
-      context.scale(scaleX, scaleY);
-    } else {
-      context.translate(tx, ty);
-    }
+    scaleX = mirroredX ? -1 : 1;
+    scaleY = mirroredY ? -1 : 1;
+    translateX = mirroredX ? tx + dw : tx;
+    translateY = mirroredY ? ty + dh : ty;
+    context.translate(translateX, translateY);
+    context.scale(scaleX, scaleY);
     context.rotate(Math.PI / 180 * this.rotation);
     context.drawImage(image, sx, sy, sw, sh, -this.origin.x, -this.origin.y, dw, dh);
     return context.restore();

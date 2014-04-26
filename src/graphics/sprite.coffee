@@ -41,15 +41,12 @@ class Sprite extends Node
     tx = Math.round (drawX || @position.x) + @origin.x + Sprite.renderOffset.x
     ty = Math.round (drawY || @position.y) + @origin.y + Sprite.renderOffset.y
 
-    if mirrored
-      scaleX = if mirroredX then -1 else 1
-      scaleY = if mirroredY then -1 else 1
-      translateX = if mirroredX then tx + dw else tx
-      translateY = if mirroredY then ty + dh else ty
-      context.translate translateX, translateY
-      context.scale scaleX, scaleY
-    else
-      context.translate tx, ty
+    scaleX = if mirroredX then -1 else 1
+    scaleY = if mirroredY then -1 else 1
+    translateX = if mirroredX then tx + dw else tx
+    translateY = if mirroredY then ty + dh else ty
+    context.translate translateX, translateY
+    context.scale scaleX, scaleY
 
     context.rotate Math.PI / 180 * @rotation
 

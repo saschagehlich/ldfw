@@ -23,7 +23,7 @@ class Sprite extends Node
    * Draws the sprite on the given context
    * @param  [CanvasRenderingContext2D] context
   ###
-  draw: (context, drawX, drawY, mirrored=false) ->
+  draw: (context, drawX, drawY, mirroredX=false, mirroredY=false) ->
     image = @textureAtlas.getAtlasImage()
 
     # Source rectangle
@@ -42,8 +42,12 @@ class Sprite extends Node
     ty = Math.round (drawY || @position.y) + @origin.y + Sprite.renderOffset.y
 
     if mirrored
-      context.translate tx + dw, ty
-      context.scale -1, 1
+      scaleX = if mirroredX then -1 else 1
+      scaleY = if mirroredY then -1 else 1
+      translateX = if mirroredX then tx + dw else tx
+      translateY = if mirroredY then ty + dh else ty
+      context.translate translateX, translateY
+      context.scale scaleX, scaleY
     else
       context.translate tx, ty
 

@@ -869,10 +869,13 @@ module.exports = Sprite = function (_super) {
   Sprite.prototype.setRotation = function (rotation) {
     return this.rotation = rotation;
   };
-  Sprite.prototype.draw = function (context, drawX, drawY, mirrored) {
-    var dh, dw, image, sh, sw, sx, sy, tx, ty;
-    if (mirrored == null) {
-      mirrored = false;
+  Sprite.prototype.draw = function (context, drawX, drawY, mirroredX, mirroredY) {
+    var dh, dw, image, scaleX, scaleY, sh, sw, sx, sy, translateX, translateY, tx, ty;
+    if (mirroredX == null) {
+      mirroredX = false;
+    }
+    if (mirroredY == null) {
+      mirroredY = false;
     }
     image = this.textureAtlas.getAtlasImage();
     sx = this.frame.frame.x;
@@ -885,8 +888,12 @@ module.exports = Sprite = function (_super) {
     tx = Math.round((drawX || this.position.x) + this.origin.x + Sprite.renderOffset.x);
     ty = Math.round((drawY || this.position.y) + this.origin.y + Sprite.renderOffset.y);
     if (mirrored) {
-      context.translate(tx + dw, ty);
-      context.scale(-1, 1);
+      scaleX = mirroredX ? -1 : 1;
+      scaleY = mirroredY ? -1 : 1;
+      translateX = mirroredX ? tx + dw : tx;
+      translateY = mirroredY ? ty + dh : ty;
+      context.translate(translateX, translateY);
+      context.scale(scaleX, scaleY);
     } else {
       context.translate(tx, ty);
     }
